@@ -1,5 +1,4 @@
 import 'package:defaultproject/services/database_controller.dart';
-import 'package:defaultproject/view/home/home_controller.dart';
 import 'package:defaultproject/view/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

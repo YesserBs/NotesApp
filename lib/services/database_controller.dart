@@ -38,6 +38,17 @@ class DatabaseController extends GetxController {
     );
   }
 
+  Future<void> getAllTableNames() async {
+    List<Map<String, dynamic>> tables = await database.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+
+    List<String> tableNames = [];
+    for (var table in tables) {
+      tableNames.add(table['name']);
+    }
+    print("ALL the tables here: $tableNames");
+  }
+
+
   Future<void> printDatabaseContent() async {
     List<Map<String, dynamic>> rows = await database.query('data');
 
@@ -45,6 +56,12 @@ class DatabaseController extends GetxController {
       print('ID: ${row['id']}, Text: ${row['text']}');
     }
   }
+
+  Future<void> clearDataTable() async {
+    await database.delete('data');
+    print('Data cleared from the table.');
+  }
+
 
   void save(String title, bool changeTitle, String value, bool changeData, int index, bool wasEmpty) async {
     if (index != -1) {
@@ -58,6 +75,9 @@ class DatabaseController extends GetxController {
       titles.add(title);
       data.add(value);
       await addTextToDatabase(value);
+      await printDatabaseContent();
+      await getAllTableNames();
+      await clearDataTable();
       await printDatabaseContent();
     }
     update();

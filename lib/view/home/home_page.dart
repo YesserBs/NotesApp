@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
-import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
   final DatabaseController DbC = Get.put(DatabaseController());
@@ -23,18 +22,22 @@ class HomePage extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Icon(
-                          Icons.search,
-                          color: Colors.white,
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.grey[800],
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 10),
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
