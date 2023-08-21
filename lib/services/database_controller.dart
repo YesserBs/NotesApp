@@ -5,6 +5,9 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseController extends GetxController {
   var titles = <String>[].obs;
   var data = <String>[].obs;
+  var filtredTitles = <String>[].obs;
+  var filtredData = <String>[].obs;
+  String searchedText = "";
   late Database database;
 
   @override
@@ -12,6 +15,27 @@ class DatabaseController extends GetxController {
     super.onInit();
     await initializeDatabase();
     fetchDatabase();
+  }
+
+  void getSearchText(String value) {
+    searchedText = value;
+    filterTitles(value);
+  }
+
+
+  void filterTitles(String value) {
+    if (value.isEmpty) {
+      filtredTitles.value = titles.value; // Show all articles if value is empty
+      filtredData.value = data.value;
+    } else {
+      filtredTitles.value = titles.value
+          .where((title) => title.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+      filtredData.value = titles.value
+          .where((title) => title.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    }
+    print("Here the filtred titles and DATA $filtredTitles $filtredData");
   }
 
   Future<void> initializeDatabase() async {
@@ -108,6 +132,8 @@ class DatabaseController extends GetxController {
     for (var row in rowsData) {
       data.add(row['text']);
     }
+    filtredTitles.value = titles.value;
+    filtredData.value = data.value;
     update();
   }
 

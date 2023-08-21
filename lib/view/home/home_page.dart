@@ -24,21 +24,7 @@ class HomePage extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[800],
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 10),
-                              Icon(
-                                Icons.search,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: _SearchFormField(),
                       ),
                     ],
                   ),
@@ -54,11 +40,11 @@ class HomePage extends StatelessWidget {
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
                         ),
-                        itemCount: DbC.titles.value.length,
+                        itemCount: DbC.filtredTitles.value.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: (){
-                              Get.to(ContentPage(), arguments: [DbC.titles[index], DbC.data[index], index]);
+                              Get.to(ContentPage(), arguments: [DbC.filtredTitles[index], DbC.filtredData[index], index]);
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -72,7 +58,7 @@ class HomePage extends StatelessWidget {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(DbC.titles.value[index],
+                                      child: Text(DbC.filtredTitles.value[index],
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                             fontSize: 25,
@@ -81,7 +67,7 @@ class HomePage extends StatelessWidget {
                                           overflow: TextOverflow.ellipsis
                                       ),
                                     ),
-                                    Text(DbC.data.value[index],
+                                    Text(DbC.filtredData.value[index],
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 17,
@@ -127,4 +113,32 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _SearchFormField() {
+  DatabaseController _controller = Get.find();
+  return Container(
+    height: 36.0,
+    margin: EdgeInsets.all(10.0),
+    decoration: BoxDecoration(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(9),
+      border: Border.all(
+        color: Colors.grey, // Set the color of the border
+        width: 1.2, // Set the width of the border
+      ),
+    ),
+    child: TextFormField(
+      onChanged: _controller.getSearchText,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        prefixIcon: Icon(
+          CupertinoIcons.search,
+          color: Colors.grey,
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+      ),
+      style: TextStyle(color: Colors.grey), // Set the text color of the TextFormField
+    ),
+  );
 }
