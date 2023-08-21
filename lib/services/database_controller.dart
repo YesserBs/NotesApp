@@ -8,9 +8,10 @@ class DatabaseController extends GetxController {
   late Database database;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    initializeDatabase();
+    await initializeDatabase();
+    fetchDatabase();
   }
 
   Future<void> initializeDatabase() async {
@@ -20,17 +21,33 @@ class DatabaseController extends GetxController {
       path,
       version: 1,
       onCreate: (db, version) async {
+        print("ENTERED");
         await db.execute('''
-        CREATE TABLE data (
+          CREATE TABLE data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT
+          )
+      ''');
+
+        await db.execute('''
+        CREATE TABLE titles (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          text TEXT
+          value INTEGER
         )
       ''');
       },
     );
   }
 
-  Future<void> addTextToDatabase(String value) async {
+  Future<void> insertTitle(String value) async {
+    await database.insert(
+      'titles',
+      {'text': value},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> insertData(String value) async {
     await database.insert(
       'data',
       {'text': value},
@@ -50,17 +67,50 @@ class DatabaseController extends GetxController {
 
 
   Future<void> printDatabaseContent() async {
-    List<Map<String, dynamic>> rows = await database.query('data');
+    List<Map<String, dynamic>> rowsTitles = await database.query('titles');
+    List<Map<String, dynamic>> rowsData = await database.query('data');
 
-    for (var row in rows) {
-      print('ID: ${row['id']}, Text: ${row['text']}');
+    for (var row in rowsTitles) {
+      print('Titles content ID: ${row['id']}, Text: ${row['text']}');
+    }
+
+    for (var row in rowsData) {
+      print('Data content ID: ${row['id']}, Text: ${row['text']}');
     }
   }
 
-  Future<void> clearDataTable() async {
+  Future<void> clearDataAndTitles() async {
     await database.delete('data');
+    await database.delete('titles');
     print('Data cleared from the table.');
   }
+
+  Future<void> createTable(String tableName, List<String> columns) async {
+    await database.execute('''
+    CREATE TABLE $tableName (
+      ${columns.join(', ')}
+    )
+  ''');
+  }
+
+  Future<void> deleteTable(String tableName) async {
+    await database.execute('DROP TABLE IF EXISTS $tableName');
+  }
+
+  Future<void> fetchDatabase() async {
+    List<Map<String, dynamic>> rowsTitles = await database.query('titles');
+    List<Map<String, dynamic>> rowsData = await database.query('data');
+
+    for (var row in rowsTitles) {
+      titles.add(row['text']);
+    }
+
+    for (var row in rowsData) {
+      data.add(row['text']);
+    }
+    update();
+  }
+
 
 
   void save(String title, bool changeTitle, String value, bool changeData, int index, bool wasEmpty) async {
@@ -74,12 +124,18 @@ class DatabaseController extends GetxController {
     } else {
       titles.add(title);
       data.add(value);
-      await addTextToDatabase(value);
+
+      /*await clearDataAndTitles();
+      await insertTitle(title);
+      await insertData(value);
       await printDatabaseContent();
-      await getAllTableNames();
-      await clearDataTable();
-      await printDatabaseContent();
+      await getAllTableNames();*/
     }
+
+    await insertTitle(title);
+    await insertData(value);
+    await printDatabaseContent();
+
     update();
   }
 }
