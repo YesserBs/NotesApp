@@ -38,6 +38,7 @@ dependencies:
   get: ^4.6.5
   sqflite: ^2.3.0
   path: ^1.8.3
+  flutter_keyboard_visibility: ^5.4.1
 
 
 dev_dependencies:

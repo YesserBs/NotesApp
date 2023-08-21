@@ -137,8 +137,6 @@ class DatabaseController extends GetxController {
     update();
   }
 
-
-
   void save(String title, bool changeTitle, String value, bool changeData, int index, bool wasEmpty) async {
     if (index != -1) {
       if (changeTitle == false) {

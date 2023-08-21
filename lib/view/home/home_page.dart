@@ -2,6 +2,7 @@ import 'package:defaultproject/services/database_controller.dart';
 import 'package:defaultproject/view/content/content_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -12,105 +13,108 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: Colors.grey[900],
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SearchFormField(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  Expanded(
-                    child: Obx(()=> Container(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.5,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+    return KeyboardDismissOnTap(
+      dismissOnCapturedTaps: true,
+      child: Stack(
+        children: [
+          Scaffold(
+            backgroundColor: Colors.grey[900],
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _SearchFormField(),
                         ),
-                        itemCount: DbC.filtredTitles.value.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: (){
-                              Get.to(ContentPage(), arguments: [DbC.filtredTitles[index], DbC.filtredData[index], index]);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[500],
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20.0, bottom: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(DbC.filtredTitles.value[index],
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                            fontSize: 25,
-                                            color: Colors.grey[900]
-                                          ),
-                                          overflow: TextOverflow.ellipsis
-                                      ),
-                                    ),
-                                    Text(DbC.filtredData.value[index],
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          color: Colors.grey[700]
-                                      ),
-                                      overflow: TextOverflow.ellipsis,)
-                                  ],
+                      ],
+                    ),
+                    SizedBox(height: 30),
+                    Expanded(
+                      child: Obx(()=> Container(
+                        child: GridView.builder(
+                          shrinkWrap: true,
+
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1.5,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: DbC.filtredTitles.value.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: (){
+                                Get.to(ContentPage(), arguments: [DbC.filtredTitles[index], DbC.filtredData[index], index]);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[500],
+                                    borderRadius: BorderRadius.circular(10)
                                 ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 20.0, bottom: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(DbC.filtredTitles.value[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                              fontSize: 25,
+                                              color: Colors.grey[900]
+                                            ),
+                                            overflow: TextOverflow.ellipsis
+                                        ),
+                                      ),
+                                      Text(DbC.filtredData.value[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            color: Colors.grey[700]
+                                        ),
+                                        overflow: TextOverflow.ellipsis,)
+                                    ],
+                                  ),
 
 
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ))
-                  ),
-                ],
+                            );
+                          },
+                        ),
+                      ))
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          bottom: 20,
-          right: 20,
-          child: GestureDetector(
-            onTap: (){
-              Get.to(ContentPage(), arguments: ["", "", -1]);
-            },
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(
-                CupertinoIcons.plus,
-                color: Colors.white,
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: GestureDetector(
+              onTap: (){
+                Get.to(ContentPage(), arguments: ["", "", -1]);
+              },
+              child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(10)),
+                child: Icon(
+                  CupertinoIcons.plus,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
