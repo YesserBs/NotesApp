@@ -3,10 +3,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseController extends GetxController {
-  var titles = <String>[].obs;
-  var data = <String>[].obs;
-  var filtredTitles = <String>[].obs;
-  var filtredData = <String>[].obs;
+  var data = <Map<String, String>>[].obs;
+  var filtredData = <Map<String, String>>[].obs;
   String searchedText = "";
   late Database database;
 
@@ -25,17 +23,13 @@ class DatabaseController extends GetxController {
 
   void filterTitles(String value) {
     if (value.isEmpty) {
-      filtredTitles.value = titles.value; // Show all articles if value is empty
-      filtredData.value = data.value;
+      filtredData.value = data.value; // Show all articles if value is empty
     } else {
-      filtredTitles.value = titles.value
-          .where((title) => title.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-      filtredData.value = titles.value
-          .where((title) => title.toLowerCase().contains(value.toLowerCase()))
+      filtredData.value = data.value
+          .where((instance) => instance["title"]!.toLowerCase().contains(value.toLowerCase()))
           .toList();
     }
-    print("Here the filtred titles and DATA $filtredTitles $filtredData");
+    print("Here the filtred titles and DATA $filtredData $filtredData");
   }
 
   Future<void> initializeDatabase() async {
@@ -63,18 +57,10 @@ class DatabaseController extends GetxController {
     );
   }
 
-  Future<void> insertTitle(String value) async {
-    await database.insert(
-      'titles',
-      {'text': value},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<void> insertData(String value) async {
+  Future<void> insertData(String title, String content) async {
     await database.insert(
       'data',
-      {'text': value},
+      {'title': title, 'content': content},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -91,12 +77,7 @@ class DatabaseController extends GetxController {
 
 
   Future<void> printDatabaseContent() async {
-    List<Map<String, dynamic>> rowsTitles = await database.query('titles');
     List<Map<String, dynamic>> rowsData = await database.query('data');
-
-    for (var row in rowsTitles) {
-      print('Titles content ID: ${row['id']}, Text: ${row['text']}');
-    }
 
     for (var row in rowsData) {
       print('Data content ID: ${row['id']}, Text: ${row['text']}');
@@ -105,7 +86,6 @@ class DatabaseController extends GetxController {
 
   Future<void> clearDataAndTitles() async {
     await database.delete('data');
-    await database.delete('titles');
     print('Data cleared from the table.');
   }
 
@@ -122,43 +102,37 @@ class DatabaseController extends GetxController {
   }
 
   Future<void> fetchDatabase() async {
-    List<Map<String, dynamic>> rowsTitles = await database.query('titles');
     List<Map<String, dynamic>> rowsData = await database.query('data');
 
-    for (var row in rowsTitles) {
-      titles.add(row['text']);
-    }
-
     for (var row in rowsData) {
-      data.add(row['text']);
+      data.add({
+        'title': row['title'],
+        'content': row['content'],
+      });
     }
-    filtredTitles.value = titles.value;
     filtredData.value = data.value;
     update();
   }
 
-  void save(String title, bool changeTitle, String value, bool changeData, int index, bool wasEmpty) async {
+  void save(
+      String title,
+      bool changeTitle,
+      String content,
+      bool changeContent,
+      int index,
+      ) async {
     if (index != -1) {
       if (changeTitle == false) {
-        titles[index] = title;
+        data[index]['title'] = title;
       }
-      if (changeData == false) {
-        data[index] = value;
+      if (changeContent == false) {
+        data[index]['content'] = content;
       }
     } else {
-      titles.add(title);
-      data.add(value);
-
-      /*await clearDataAndTitles();
-      await insertTitle(title);
-      await insertData(value);
-      await printDatabaseContent();
-      await getAllTableNames();*/
+      data.add({'title': title, 'content': content});
     }
 
-    await insertTitle(title);
-    await insertData(value);
-    await printDatabaseContent();
+    await insertData(title, content);
 
     update();
   }

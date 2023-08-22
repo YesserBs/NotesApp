@@ -132,7 +132,7 @@ Future<void> showSaveChangesDialog(BuildContext context, title, changeTitle, val
           ),
           GestureDetector(
             onTap: (){
-              DbC.save(title, changeTitle, value, changeData, index, wasEmpty);
+              DbC.save(title, changeTitle, value, changeData, index);
               Get.off(HomePage());
             },
             child: Container(
