@@ -57,12 +57,22 @@ class DatabaseController extends GetxController {
     );
   }
 
-  Future<void> insertData(String title, String content) async {
-    await database.insert(
-      'data',
-      {'title': title, 'content': content},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  Future<void> insertData(int id, String title, String content, bool update) async {
+    if (update){
+      await database.update(
+        'data',
+        {'title': title, 'content': content},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+    else{
+      await database.insert(
+        'data',
+        {'id': id, 'title': title, 'content': content},
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   Future<void> getAllTableNames() async {
@@ -78,9 +88,10 @@ class DatabaseController extends GetxController {
 
   Future<void> printDatabaseContent() async {
     List<Map<String, dynamic>> rowsData = await database.query('data');
+    print("Entered");
 
     for (var row in rowsData) {
-      print('Data content ID: ${row['id']}, Text: ${row['text']}');
+      print('Data content ID: ${row['id']}, title ${row['title']}, content: ${row['content']}');
     }
   }
 
@@ -121,7 +132,11 @@ class DatabaseController extends GetxController {
       bool changeContent,
       int index,
       ) async {
+    bool change = false;
+    int id = data.value.length-1;
     if (index != -1) {
+      change = true;
+      id = index;
       if (changeTitle == false) {
         data[index]['title'] = title;
       }
@@ -132,7 +147,14 @@ class DatabaseController extends GetxController {
       data.add({'title': title, 'content': content});
     }
 
-    await insertData(title, content);
+    //await deleteTable("data");
+    //await createTable("data", ["id INTEGER", "title TEXT", "content TEXT"]);
+
+    //await insertData(title, content);
+    //await clearDataAndTitles();
+    await insertData(id, title, content, change);
+    await printDatabaseContent();
+
 
     update();
   }
