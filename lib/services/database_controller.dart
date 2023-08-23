@@ -97,6 +97,21 @@ class DatabaseController extends GetxController {
     }
   }
 
+  Future<void> deleteItem(int id) async {
+    print("Entered and here is data ${data.value}");
+    // Deleting from data list
+    data.removeAt(id);
+    // Deleting from database
+    await database.delete(
+      'data',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    print("Entered and here is data ${data.value}");
+    await printDatabaseContent();
+    update();
+  }
+
   Future<void> getAllTableNames() async {
     List<Map<String, dynamic>> tables = await database.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
 
@@ -175,6 +190,7 @@ class DatabaseController extends GetxController {
     //await insertData(title, content);
     //await clearDataAndTitles();
     await insertData(id, title, content, changeTitle, changeContent, change);
+    //await deleteItem(0);
     await printDatabaseContent();
 
     update();

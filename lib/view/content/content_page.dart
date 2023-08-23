@@ -1,5 +1,6 @@
 import 'package:defaultproject/services/database_controller.dart';
 import 'package:defaultproject/view/home/home_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -28,6 +29,7 @@ class _ContentPageState extends State<ContentPage> {
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -47,6 +49,25 @@ class _ContentPageState extends State<ContentPage> {
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  if (arguments[2] != -1)
+                  GestureDetector(
+                    onTap: () {
+                      DbC.deleteItem(arguments[2]);
+                      Get.off(HomePage());
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.delete,
                         color: Colors.white,
                       ),
                     ),
