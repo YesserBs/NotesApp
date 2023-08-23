@@ -57,16 +57,38 @@ class DatabaseController extends GetxController {
     );
   }
 
-  Future<void> insertData(int id, String title, String content, bool update) async {
-    if (update){
-      await database.update(
-        'data',
-        {'title': title, 'content': content},
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+  Future<void> insertData(int id, String title, String content, bool changeTitle, bool changeContent, bool change) async {
+    print("HERE parameters $change $changeTitle $changeContent");
+    if (change){
+      if (changeTitle || changeContent){
+        if (!changeTitle && changeContent){
+          await database.update(
+            'data',
+            {'title': title},
+            where: 'id = ?',
+            whereArgs: [id],
+          );
+        }
+        else if (!changeContent && changeTitle){
+          await database.update(
+            'data',
+            {'content': content},
+            where: 'id = ?',
+            whereArgs: [id],
+          );
+        }
+      }
+      else{
+        await database.update(
+          'data',
+          {'title': title, 'content': content},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
     }
     else{
+      print("Entred ALSO");
       await database.insert(
         'data',
         {'id': id, 'title': title, 'content': content},
@@ -133,7 +155,7 @@ class DatabaseController extends GetxController {
       int index,
       ) async {
     bool change = false;
-    int id = data.value.length-1;
+    int id = data.value.length;
     if (index != -1) {
       change = true;
       id = index;
@@ -152,9 +174,8 @@ class DatabaseController extends GetxController {
 
     //await insertData(title, content);
     //await clearDataAndTitles();
-    await insertData(id, title, content, change);
+    await insertData(id, title, content, changeTitle, changeContent, change);
     await printDatabaseContent();
-
 
     update();
   }
