@@ -29,7 +29,8 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 30),
-                    Expanded(
+                    (dbController.data.value.length != 0)
+                    ? Expanded(
                       child: Obx(() => Container(
                         child: GridView.builder(
                           shrinkWrap: true,
@@ -86,7 +87,19 @@ class HomePage extends StatelessWidget {
                           },
                         ),
                       )),
-                    ),
+                    )
+                    : Expanded(child:
+                      Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset("assets/emptyImg.png"),
+                              SizedBox(height: 20,),
+                              Text("You have no notes yet", style: TextStyle(color: Colors.white, fontSize: 20),)
+                            ],
+                          )
+                      )
+                    )
                   ],
                 ),
               ),
