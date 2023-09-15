@@ -12,7 +12,7 @@ class DatabaseController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     await initializeDatabase();
-    //fetchDatabase();
+    await fetchDatabase();
   }
 
   void getSearchText(String value) {
@@ -64,7 +64,7 @@ class DatabaseController extends GetxController {
         if (!changeTitle && changeContent){
           await database.update(
             'data',
-            {'titles': title},
+            {'title': title},
             where: 'id = ?',
             whereArgs: [id],
           );
@@ -107,6 +107,17 @@ class DatabaseController extends GetxController {
       where: 'id = ?',
       whereArgs: [id],
     );
+    // Update IDs in the range [id + 1, maxId]
+    for (int i = id + 1; i <= data.value.length; i++) {
+      await database.update(
+        'data',
+        {'id': i - 1},
+        where: 'id = ?',
+        whereArgs: [i],
+      );
+    }
+
+
     print("Entered and here is data ${data.value}");
     await printDatabaseContent();
     update();
@@ -184,13 +195,14 @@ class DatabaseController extends GetxController {
       data.add({'title': title, 'content': content});
     }
 
-    //await deleteTable("titles");
+    //await deleteTable("data");
     //await createTable("data", ["id INTEGER", "title TEXT", "content TEXT"]);
+
+    //await insertData(title, content);
     //await clearDataAndTitles();
     await insertData(id, title, content, changeTitle, changeContent, change);
-    //await deleteItem(0);
-    await printDatabaseContent();
     await getAllTableNames();
+    await printDatabaseContent();
 
     update();
   }
