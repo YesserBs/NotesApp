@@ -2,6 +2,7 @@ import 'package:defaultproject/services/database_controller.dart';
 import 'package:defaultproject/view/home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
@@ -21,105 +22,119 @@ class _ContentPageState extends State<ContentPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return WillPopScope(
+      onWillPop: () async {
+        if (unchangedData == true && unchangedTitle == true){
+          Get.back();
+        }
+        else{
+          showSaveChangesDialog(context, unsavedTitle, unchangedTitle, unsavedData, unchangedData, arguments[2], true);
+        }
+        return true;
+      },
+      child: KeyboardDismissOnTap(
+        dismissOnCapturedTaps: true,
+        child: Scaffold(
+          backgroundColor: Colors.grey[900],
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (unchangedData == true && unchangedTitle == true){
-                        Get.back();
-                      }
-                      else{
-                        showSaveChangesDialog(context, unsavedTitle, unchangedTitle, unsavedData, unchangedData, arguments[2], true);
-                      }
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[800],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  if (arguments[2] != -1)
-                  GestureDetector(
-                    onTap: () {
-                      DbC.deleteItem(arguments[2]);
-                      Get.off(HomePage());
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[800],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        CupertinoIcons.delete,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 30),
-              TextField(
-                onChanged: (text) {
-                  unchangedTitle = false;
-                  unsavedTitle = text;
-                },
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 35
-                ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Untitled',
-                  hintStyle: TextStyle(
-                    color: Colors.white,
-                  )
-                ),
-                controller: TextEditingController(text: arguments[0])
-              ),
-              SingleChildScrollView(
-                child: Container(
-                  child: Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextField(
-                        maxLines: null, // Allows unlimited lines
-                        onChanged: (text) {
-                          unchangedData = false;
-                          unsavedData = text;
+                      GestureDetector(
+                        onTap: () {
+                          if (unchangedData == true && unchangedTitle == true){
+                            Get.back();
+                          }
+                          else{
+                            showSaveChangesDialog(context, unsavedTitle, unchangedTitle, unsavedData, unchangedData, arguments[2], true);
+                          }
                         },
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 19
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            color: Colors.white,
+                          ),
                         ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none
+                      ),
+                      if (arguments[2] != -1)
+                      GestureDetector(
+                        onTap: () {
+                          DbC.deleteItem(arguments[2]);
+                          Get.off(HomePage());
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            CupertinoIcons.delete,
+                            color: Colors.white,
+                          ),
                         ),
-                        controller: TextEditingController(text: arguments[1])
                       ),
                     ],
                   ),
-                ),
+                  SizedBox(height: 30),
+                  TextField(
+                    onChanged: (text) {
+                      unchangedTitle = false;
+                      unsavedTitle = text;
+                    },
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 35
+                    ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Untitled',
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                      )
+                    ),
+                    controller: TextEditingController(text: arguments[0])
+                  ),
+                  SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          TextField(
+                            maxLines: null, // Allows unlimited lines
+                            onChanged: (text) {
+                              unchangedData = false;
+                              unsavedData = text;
+                            },
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 19
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none
+                            ),
+                            controller: TextEditingController(text: arguments[1])
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 20,
+                  )
+                ],
               ),
-              Container(
-                height: 20,
-              )
-            ],
+            ),
           ),
         ),
       ),

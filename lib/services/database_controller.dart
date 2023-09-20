@@ -1,3 +1,4 @@
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -170,6 +171,7 @@ class DatabaseController extends GetxController {
       });
     }
     filtredData.value = data.value;
+    FlutterNativeSplash.remove();
     update();
   }
 
